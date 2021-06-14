@@ -1,0 +1,50 @@
+<header>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid" style="margin-bottom: 1rem">
+          <a class="navbar-brand" href="#">C cubed - Covert Channel Chat</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+                <form class="d-flex">
+                    <input class="form-control form-control-sm" type="text" placeholder="Please input here your key!" aria-label=".form-control-sm example" style="margin-right: 1em" size="50">
+                    <button class="btn btn-sm btn-outline-secondary" type="button">Generate</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+</header>
+
+<main style="background-color: teal" class="chat">
+    <div class="container">
+        <div class="chat-content">
+            <div class="card">
+                <div *ngFor="let message of allMessages">
+                    <li class="list-group-item">
+                        <strong> {{message.user}}: </strong>
+                        <span> {{message.message}} </span>
+                    </li>
+                </div>
+            </div>
+        </div>
+        <form [formGroup]="user_message_Form" (ngSubmit)="sendMessage()">
+            <div class="chat-send row" id="chat-sending"> 
+                <div class="col-2">
+                     <select class="form-select form-select-sm" aria-label=".form-select-sm example" formControlName="user">
+                         <option *ngFor="let user of users" [ngValue]="user">{{user}}</option>
+                     </select>
+                </div>
+                <div class="col-8"> 
+                    <input formControlName="message" type="text" class="form-control" name="message" id="input-message" placeholder="Type in your message here...">
+                </div>
+                <div class="col-2" style="padding-bottom: 3rem;">
+                    <button type="submit" class="btn btn-outline-light puffer_top">Send</button>
+                </div>
+            </div>    
+        </form>
+    </div>
+</main>
