@@ -7,7 +7,7 @@ import arp_sender
 import arp_receiver
 import threading
 import eventlet
-import queue
+
 eventlet.monkey_patch()
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -17,6 +17,7 @@ CORS(app)
 
 clients = ''
 
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
@@ -25,12 +26,12 @@ def index():
 @socketio.on('connect')
 def handle_connect():
     socketio.emit('connect_response', {'data': 'Connected!'})
-    print("Client connected: "+request.sid)
+    print("Client connected: " + request.sid)
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    print('Client disconnected: '+request.sid)
+    print('Client disconnected: ' + request.sid)
 
 
 @socketio.on('json')
@@ -48,15 +49,17 @@ def handle_MessageIncome(msg):
     clients = request.sid
     print('GLOBAL = ' + clients)
 
+
 @socketio.on('arp_receiver_message')
 def handle_arp_connect(msg):
-    print("ARP-Receiver sending! Message:" +msg)
+    print("ARP-Receiver sending! Message:" + msg)
     sendJson(msg)
 
 
 def sendJson(message: str):
-    print('SID_SendJSON '+clients)
+    print('SID_SendJSON ' + clients)
     socketio.emit('json', {'data': message}, room=clients)
+
 
 # @app.route('/send', methods=['POST'])
 # def send():
@@ -81,14 +84,11 @@ def start_websocket():
         sys.exit(0)
 
 
-
-
 if __name__ == '__main__':
-    #socketio.start_background_task(target=arp_receiver.call_receiver, app=app)
+    # socketio.start_background_task(target=arp_receiver.call_receiver, app=app)
     arpReceiver_thread = threading.Thread(target=arp_receiver.call_receiver, args=())
     arpReceiver_thread.daemon = True
     arpReceiver_thread.start()
-    #arpReceiver_thread = multiprocessing.Process(target=arp_receiver.call_receiver)
-    #arpReceiver_thread.start()
+    # arpReceiver_thread = multiprocessing.Process(target=arp_receiver.call_receiver)
+    # arpReceiver_thread.start()
     start_websocket()
-
