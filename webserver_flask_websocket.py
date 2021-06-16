@@ -1,21 +1,21 @@
 import sys
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
 import arp_sender
 import arp_receiver
 import threading
 import eventlet
+import queue
 eventlet.monkey_patch()
-
-clients = 'test'
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['SECRET_KEY'] = '#45!54#mY_sEcrEt_KeY#45!54#'
 socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
 CORS(app)
 
+clients = ''
 
 @app.route('/', methods=['GET'])
 def index():
@@ -25,15 +25,12 @@ def index():
 @socketio.on('connect')
 def handle_connect():
     socketio.emit('connect_response', {'data': 'Connected!'})
-    print('SID= '+request.sid)
-    global clients
-    clients = request.sid
-    print('GLOBAL = '+clients)
+    print("Client connected: "+request.sid)
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    print('Client disconnected!')
+    print('Client disconnected: '+request.sid)
 
 
 @socketio.on('json')
@@ -46,6 +43,15 @@ def handle_jsonIncome(json):
 @socketio.on('message')
 def handle_MessageIncome(msg):
     print("Receive Message: " + msg)
+    print('SID= ' + request.sid)
+    global clients
+    clients = request.sid
+    print('GLOBAL = ' + clients)
+
+@socketio.on('arp_receiver_message')
+def handle_arp_connect(msg):
+    print("ARP-Receiver sending! Message:" +msg)
+    sendJson(msg)
 
 
 def sendJson(message: str):
@@ -79,7 +85,7 @@ def start_websocket():
 
 if __name__ == '__main__':
     #socketio.start_background_task(target=arp_receiver.call_receiver, app=app)
-    arpReceiver_thread = threading.Thread(target=arp_receiver.call_receiver)
+    arpReceiver_thread = threading.Thread(target=arp_receiver.call_receiver, args=())
     arpReceiver_thread.daemon = True
     arpReceiver_thread.start()
     #arpReceiver_thread = multiprocessing.Process(target=arp_receiver.call_receiver)

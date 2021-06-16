@@ -3,18 +3,15 @@ from scapy.layers.l2 import ARP
 import sys
 import logging
 import socket
-
 from scapy.sendrecv import sniff
-
 import encode_decode
 import encrypt_decrypt
+import socketio
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def package_src_to_list(macs: list):
-    import webserver_flask_websocket
-
     message = ""
     for i in range(len(macs)):
         mac = list(macs[i].split(":"))
@@ -22,9 +19,13 @@ def package_src_to_list(macs: list):
             mac.remove("00")
         message += encode_decode.decode_message(mac)
     print(app.app_context())
-    print('Message:' + encrypt_decrypt.decrypt(message))
-    with app.app_context():
-        socketio.emit('json', {'data': message}, room=webserver_flask_websocket.clients)
+    decr_message = encrypt_decrypt.decrypt((message))
+    print('Message:' + decr_message)
+
+    socketEndpoint = 'http://127.0.0.1:5000'
+    sio = socketio.Client()
+    sio.connect(socketEndpoint, transports='websocket')
+    sio.emit('arp_receiver_message', decr_message)
 
 
 package_count = 0
