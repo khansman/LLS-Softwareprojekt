@@ -1,4 +1,3 @@
-from webserver_flask_websocket import app, socketio
 from scapy.layers.l2 import ARP
 import sys
 import logging
@@ -11,21 +10,20 @@ import socketio
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
-def package_src_to_list(macs: list):
+def package_src_to_list(macs: list, sender_ip: str):
     message = ""
     for i in range(len(macs)):
         mac = list(macs[i].split(":"))
         if mac.count("00") > 0:
             mac.remove("00")
         message += encode_decode.decode_message(mac)
-    print(app.app_context())
-    decr_message = encrypt_decrypt.decrypt((message))
-    print('Message:' + decr_message)
+    decrypted_message = encrypt_decrypt.decrypt(message)
+    print('Message:' + decrypted_message)
 
-    socketEndpoint = 'http://127.0.0.1:5000'
+    socket_endpoint = 'http://127.0.0.1:5000'
     sio = socketio.Client()
-    sio.connect(socketEndpoint, transports='websocket')
-    sio.emit('arp_receiver_message', decr_message)
+    sio.connect(socket_endpoint, transports='websocket')
+    sio.emit('arp_receiver_message', {'sender_ip': sender_ip, 'message': decrypted_message})
 
 
 package_count = 0
@@ -59,14 +57,14 @@ class ARPReceiver:
                             rec_package_count = 0
                             print(sender_ip)
                             self.log.info("Message from channel " + str(int("0x" + mac_code[:2], 0)) + " - " + sender_ip
-                                        + " :: " + str(int(mac_code.replace(":", "")[6:])) + " packets incoming!")
+                                          + " :: " + str(int(mac_code.replace(":", "")[6:])) + " packets incoming!")
 
                         elif mac_code[:2] == channel_id:
                             rec_package_count += 1
                             mac_list.append(mac_code[3:])
 
                             if package_count == rec_package_count:
-                                package_src_to_list(mac_list)
+                                package_src_to_list(mac_list, sender_ip)
                                 mac_list = []
                                 package_count = 0
                                 rec_package_count = 0
@@ -92,4 +90,3 @@ def call_receiver():
 
 if __name__ == '__main__':
     call_receiver()
-

@@ -9,6 +9,7 @@
 <input type="text" id="chatpartner_ip">
 <script type="text/javascript">
 $(document).ready(function() {
+    $("#shutdown_tag").css("display", "none");
 
 	var socket = io.connect('http://127.0.0.1:5000');
 
@@ -21,6 +22,7 @@ $(document).ready(function() {
 		console.log('Received message');
 	});
 
+
 	$('#sendbutton').on('click', function() {
 	    var msg = $('#myMessage').val();
 	    var json_data = { "ip": $('#chatpartner_ip').val(), "message": msg};
@@ -29,10 +31,17 @@ $(document).ready(function() {
 		$('#myMessage').val('');
 	});
 
+	$('#shutdown').on('click', function(){
+	     socket.emit('shutdown',);
+	     $("#shutdown_tag").css("display","block");
+	});
+
 });
 </script>
 <ul id="messages"></ul>
 <input type="text" id="myMessage">
 <button id="sendbutton">Send</button>
+<button id="shutdown">Server herunterfahren</button>
+<label id ="shutdown_tag" style="color: red; font-size: 20px; margin-top:50px"> Server is shutdown! Please exit this Website!</label>
 </body>
 </html>

@@ -12,7 +12,7 @@ export class ChatComponent implements OnInit {
   allMessages: ChatMessageDto[] = [];
   users: string[] = ['Jule','Kai'];
 
-  user_message_Form: FormGroup; 
+  user_message_Form: FormGroup;
 
   constructor(private communicationService: CommunicationService, private formBuilder: FormBuilder) {
     this.user_message_Form = this.formBuilder.group({
@@ -20,7 +20,7 @@ export class ChatComponent implements OnInit {
       message: ['', Validators.required]
     })
    }
-  
+
 
   ngOnInit(): void {
     this.getMessage()
