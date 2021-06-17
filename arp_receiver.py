@@ -10,7 +10,7 @@ import socketio
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
-def package_src_to_list(macs: list, sender_ip: str):
+def package_src_to_list(macs: list, s_ip: str):
     message = ""
     for i in range(len(macs)):
         mac = list(macs[i].split(":"))
@@ -23,7 +23,7 @@ def package_src_to_list(macs: list, sender_ip: str):
     socket_endpoint = 'http://127.0.0.1:5000'
     sio = socketio.Client()
     sio.connect(socket_endpoint, transports='websocket')
-    sio.emit('arp_receiver_message', {'sender_ip': sender_ip, 'message': decrypted_message})
+    sio.emit('arp_receiver_message', {'sender_ip': s_ip, 'message': decrypted_message})
 
 
 package_count = 0

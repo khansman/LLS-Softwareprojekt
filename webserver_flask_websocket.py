@@ -1,6 +1,7 @@
 import sys
 
 import requests
+from requests import adapters
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -27,7 +28,7 @@ def index():
 
 @app.route('/stop')
 def shutdown_server():
-    requests.post("http://127.0.0.1:5000", {"Connection":"close"})
+    requests.post("http://127.0.0.1:5000", {"Connection": "close"})
     socketio.stop()
     return ''
 
@@ -47,7 +48,7 @@ def handle_disconnect():
 def handle_jsonIncome(json):
     print("Received JSON: " + str(json))
     arp_sender.call_sender(json['ip'], '10', json['message'])
-    #sendJson("Nachricht erfolgreich empfangen!")
+    # sendJson("Nachricht erfolgreich empfangen!")
 
 
 @socketio.on('message')
@@ -73,7 +74,7 @@ def handle_shutdown_request():
     session = requests.Session()
     adapter = requests.adapters.HTTPAdapter(max_retries=20)
     session.mount('http://', adapter)
-    session.get('http://127.0.0.1:5000/stop', headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"})
+    session.get('http://127.0.0.1:5000/stop', headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"})
     arpReceiver_thread.join()
 
 
