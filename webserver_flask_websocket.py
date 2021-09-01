@@ -14,7 +14,7 @@ import webbrowser
 eventlet.monkey_patch()
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
-socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
+socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet', cors_allowed_origins="*")
 CORS(app)
 
 clients = ''
@@ -62,10 +62,10 @@ def handle_MessageIncome(msg):
 
 @socketio.on('arp_receiver_message')
 def handle_arp_connect(msg):
-    message = msg["message"]
-    sender_ip = msg["sender_ip"]
-    message_to_client = "Nachricht von "+sender_ip+": "+message
-    sendJson(message_to_client)
+    #message = msg["message"]
+    #sender_ip = msg["sender_ip"]
+    #message_to_client = 'Nachricht von ' + sender_ip + ": " + message
+    sendJson(msg)
 
 
 @socketio.on('shutdown')
@@ -87,6 +87,10 @@ def start_websocket():
     try:
         socketio.run(app)
     except KeyboardInterrupt:
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries=20)
+        session.mount('http://', adapter)
+        session.get('http://127.0.0.1:5000/stop', headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"})
         arpReceiver_thread.join()
         sys.exit(0)
 
