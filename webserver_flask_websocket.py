@@ -95,7 +95,7 @@ def start_websocket():
         sys.exit(0)
 
 
-if __name__ == '__main__':
+def start():
     arpReceiver_thread = threading.Thread(target=arp_receiver.call_receiver, args=())
     arpReceiver_thread.daemon = True
     arpReceiver_thread.start()

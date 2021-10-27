@@ -17,20 +17,25 @@ def create_mac_list(hex_list: list, channel: str):
     :return: List of Hex-Data in Mac-Format
     """
     #print(hex_list)
-    mac_count = len(hex_list) // 5
-    mac_rest = len(hex_list) % 5
+    mac_count = len(hex_list) // 3
+    mac_rest = len(hex_list) % 3
     mac_list = []
 
     for i in range(mac_count):
-        mac = hex_list[i*5:(i+1)*5]
+        mac = hex_list[i*3:(i+1)*3]
         mac.insert(0, channel)
+        mac.insert(1, "ff")
+        mac.insert(2, "01")
         mac_list.append(mac)
 
     if mac_rest > 0:
         last_mac = hex_list[len(hex_list)-mac_rest:len(hex_list)]
-        for i in range(5 - mac_rest):
-            last_mac.insert(0, "00")
-            last_mac.insert(0, channel)
+
+        for i in range(3 - mac_rest):
+            last_mac.insert(0,"00")
+        last_mac.insert(0, channel)
+        last_mac.insert(1, "ff")
+        last_mac.insert(2, "01")
         mac_list.append(last_mac)
         #print(mac_list)
     return mac_list
