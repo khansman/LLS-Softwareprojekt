@@ -88,8 +88,8 @@ class ARPSender:
         mac_list = mac_list_to_str_list(encode_decode.str_to_hex_list(encrypt_decrypt.encrypt(self.message)[0]), channel)
         init_mac = generate_initiation_mac(mac_list, channel)
         mac_list.insert(0, init_mac)
-        package_count = 0
         end_time = timer()
+        package_count = 0
         prep_time = end_time - start_time
         f = open("MessagePrepTimes", "a")
         f.write("Message: "+self.message + "\n" + "Preparation Time: " + str(prep_time)+"\n\n")
