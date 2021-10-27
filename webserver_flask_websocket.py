@@ -75,7 +75,6 @@ def handle_shutdown_request():
     adapter = requests.adapters.HTTPAdapter(max_retries=20)
     session.mount('http://', adapter)
     session.get('http://127.0.0.1:5000/stop', headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"})
-    arpReceiver_thread.join()
 
 
 def sendJson(message: str):
@@ -91,7 +90,6 @@ def start_websocket():
         adapter = requests.adapters.HTTPAdapter(max_retries=20)
         session.mount('http://', adapter)
         session.get('http://127.0.0.1:5000/stop', headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"})
-        arpReceiver_thread.join()
         sys.exit(0)
 
 

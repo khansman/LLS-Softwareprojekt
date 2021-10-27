@@ -1,6 +1,9 @@
+import socket
+
 from scapy.layers.l2 import ARP, Ether
 import sys
 import logging
+from timeit import default_timer as timer
 
 from scapy.sendrecv import srp
 
@@ -80,16 +83,28 @@ class ARPSender:
         self.sender_id = sender_id
 
     def send_arp(self):
+        start_time = timer()
         channel = "0"+hex(int(self.sender_id)).lstrip("0x") if int(self.sender_id) < 16 else hex(int(self.sender_id)).lstrip("0x")
-
         mac_list = mac_list_to_str_list(encode_decode.str_to_hex_list(encrypt_decrypt.encrypt(self.message)[0]), channel)
         init_mac = generate_initiation_mac(mac_list, channel)
         mac_list.insert(0, init_mac)
         package_count = 0
+        end_time = timer()
+        prep_time = end_time - start_time
+        f = open("MessagePrepTimes", "a")
+        f.write("Message: "+self.message + "\n" + "Preparation Time: " + str(prep_time)+"\n\n")
+        f.close()
+        own_ip = str(socket.gethostbyname(socket.gethostname()))
         for mac in mac_list:
+            print(own_ip)
             print("Sending: "+mac)
             ans, unans = srp(Ether(src=mac, dst="ff:ff:ff:ff:ff:ff") /
-                             ARP(pdst=self.client_ip), timeout=1)
+                             ARP(pdst=self.client_ip,
+                                 psrc=own_ip,
+                                 hwsrc=mac,
+                                 hwdst="ff:ff:ff:ff:ff:ff"))
+            own_ip = own_ip[:4]+str(int(own_ip[4:][:3])+1)+own_ip[7:]
+            print(own_ip)
             package_count += 1
             for snd, rcv in ans:
                 self.log.info(rcv)

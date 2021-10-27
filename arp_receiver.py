@@ -30,9 +30,11 @@ package_count = 0
 rec_package_count = 0
 sender_ip = 0
 channel_id = 0
+original_id = 0
 mac_list = []
 
 
+# noinspection PyGlobalUndefined
 class ARPReceiver:
 
     def __init__(self, log: logging.Logger = logging.getLogger('arp_receiver')):
@@ -40,6 +42,7 @@ class ARPReceiver:
         print("ARP Receiver in Progress!")
 
         def arp_monitor_callback(pkt):
+            global original_sip
             global package_count
             global rec_package_count
             global sender_ip
@@ -55,7 +58,7 @@ class ARPReceiver:
                             channel_id = mac_code[:2]
                             package_count = int(mac_code.replace(":", "")[6:])
                             rec_package_count = 0
-                            print(sender_ip)
+                            original_sip = sender_ip
                             self.log.info("Message from channel " + str(int("0x" + mac_code[:2], 0)) + " - " + sender_ip
                                           + " :: " + str(int(mac_code.replace(":", "")[6:])) + " packets incoming!")
 
@@ -63,12 +66,13 @@ class ARPReceiver:
                             rec_package_count += 1
                             mac_list.append(mac_code[9:])
                             if package_count == rec_package_count:
-                                package_src_to_list(mac_list, sender_ip)
+                                package_src_to_list(mac_list, str(original_sip))
                                 mac_list = []
                                 package_count = 0
                                 rec_package_count = 0
                                 channel_id = 0
                                 sender_ip = 0
+                                original_sip = 0
                                 self.log.info("Transmission complete! \n\r")
 
                     except NameError:
