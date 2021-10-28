@@ -11,10 +11,8 @@ def fileWriting(input_key: bytes):
     """
     if not os.path.exists("EncryptionKey.txt"):
         f = open("EncryptionKey.txt", "wb")
-    else:
-        f = open("EncryptionKey.txt", "wb")
-    f.write(input_key)
-    f.close()
+        f.write(input_key)
+        f.close()
 
 
 def fileOpening():

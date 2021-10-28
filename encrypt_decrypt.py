@@ -13,7 +13,7 @@ def key_generation():
     """
     key = get_random_bytes(32)
     print(key)
-    file_functions.fileWriting(key)
+    #file_functions.fileWriting(key)
     return key
 
 
