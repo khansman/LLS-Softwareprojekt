@@ -60,7 +60,7 @@ def decrypt(cipher: str):
         raise TypeError('The input type can only be a valid String!')
 
     cipher = AES.new(key, AES.MODE_ECB)
-    plaintext = cipher.decrypt(base64.b64decode(ciphertext))
+    plaintext = unpad(cipher.decrypt(base64.b64decode(ciphertext)), 32)
     return bytes_to_str(plaintext)
 
 
@@ -86,5 +86,5 @@ def bytes_to_str(message_bytes: bytes):
     if type(message_bytes) not in [bytes]:
         raise TypeError('The input type can only be a valid Byte!')
 
-    message_str = unpad(message_bytes, 32).decode("utf-8")
+    message_str = message_bytes.decode("utf-8")
     return message_str

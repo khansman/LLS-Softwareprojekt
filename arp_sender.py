@@ -103,7 +103,9 @@ class ARPSender:
                                  psrc=own_ip,
                                  hwsrc=mac,
                                  hwdst="ff:ff:ff:ff:ff:ff"))
-            own_ip = own_ip[:4]+str(int(own_ip[4:][:3])+1)+own_ip[7:]
+            own_ip_front = own_ip.split(".")[:3]
+            own_ip_last = int(own_ip.split(".")[-1])+1
+            own_ip = ".".join(own_ip_front)+"."+str(own_ip_last)
             print(own_ip)
             package_count += 1
             for snd, rcv in ans:
