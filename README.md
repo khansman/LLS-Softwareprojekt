@@ -9,7 +9,7 @@ Zum Start des Programms wird folgender Befehl benötigt:
 Um das Programm zu stoppen, ist lediglich ein User-Interrupt mittels ``` Ctrl+C ``` im Kommandozeilenfenster des Programmes notwendig.
 
 
-## benötigte Python-Module
+## Benötigte Python-Module
 * [pycryptodome](https://pypi.org/project/pycryptodome/)
 * [scapy v. 2.44](https://pypi.org/project/scapy/)
 * [Flask](https://pypi.org/project/Flask/)
