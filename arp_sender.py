@@ -96,7 +96,7 @@ class ARPSender:
         f.close()
         own_ip = str(socket.gethostbyname(socket.gethostname()))
         for mac in mac_list:
-            print(own_ip)
+            #print(own_ip)
             print("Sending: "+mac)
             ans, unans = srp(Ether(src=mac, dst="ff:ff:ff:ff:ff:ff") /
                              ARP(pdst=self.client_ip,
@@ -106,7 +106,7 @@ class ARPSender:
             own_ip_front = own_ip.split(".")[:3]
             own_ip_last = int(own_ip.split(".")[-1])+1
             own_ip = ".".join(own_ip_front)+"."+str(own_ip_last)
-            print(own_ip)
+            #print(own_ip)
             package_count += 1
             for snd, rcv in ans:
                 self.log.info(rcv)
