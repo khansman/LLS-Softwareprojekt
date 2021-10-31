@@ -64,6 +64,7 @@ class ARPReceiver:
 
                         elif mac_code[:2] == channel_id and mac_code.replace(":", "")[2:][:4] == "ff01":
                             rec_package_count += 1
+                            print(mac_code[9:])
                             mac_list.append(mac_code[9:])
                             if package_count == rec_package_count:
                                 package_src_to_list(mac_list, str(original_sip))
